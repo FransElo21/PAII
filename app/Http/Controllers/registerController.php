@@ -38,6 +38,7 @@ class RegisterController extends Controller
             'namaLengkap' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:pengunjung',
             'password' => 'required|string|min:6|confirmed',
+            'status_pekerjaan' => 'required',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'nomor_telepon' => 'required|string|max:15',
             'email' => 'required|string|email|max:255|unique:pengunjung',
@@ -67,7 +68,6 @@ class RegisterController extends Controller
         
         return redirect()->route('login.showLoginForm');
     }
-    
 
     public function coba(){
         return view('coba');

@@ -168,6 +168,8 @@ return [
          * Package Service Providers...
          */
 
+
+
         /*
          * Application Service Providers...
          */
@@ -176,6 +178,9 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
+
+        
 
     ],
 
@@ -191,7 +196,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // ...
-    ])->toArray(),
+        'PDF' =>  Barryvdh\DomPDF\ServiceProvider::class,
+    ])->toArray(),    
 
 ];

@@ -24,7 +24,8 @@ return new class extends Migration
             $table->string('jenis_kelamin');
             $table->bigInteger('nomor_telepon');
             $table->string('email')->unique();
-            $table->string('foto_profil')->nullable(); 
+            $table->string('foto_profil')->nullable();
+            $table->timestamp('last_login')->nullable(); 
             $table->timestamps();
 
             $table->foreign('divisi_id')->references('id')->on('divisi')->onDelete('cascade');

@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/jpeg" href="image/Flogin.jpg">
+<link rel="shortcut icon" type="image/png" href="images/Formlogin.jpg">
 <title>Login</title>
 <!-- Bootstrap CSS -->
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
   .Login {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23B0DCE9" fill-opacity="1" d="M0,32L48,58.7C96,85,192,139,288,160C384,181,480,171,576,176C672,181,768,203,864,213.3C960,224,1056,224,1152,218.7C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ff0800" fill-opacity="1" d="M0,32L48,58.7C96,85,192,139,288,160C384,181,480,171,576,176C672,181,768,203,864,213.3C960,224,1056,224,1152,218.7C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
     background-size: cover;
     position: relative;
     height: 100vh;
@@ -33,6 +33,9 @@
     border-radius: 20px;
     padding: 12px; /* Perkecil padding */
     padding-left: 40px; /* Sesuaikan padding kiri dengan gambar */
+    -webkit-appearance: none; /* Hilangkan ikon mata bawaan browser */
+    -moz-appearance: none; /* Hilangkan ikon mata bawaan browser */
+    appearance: none; /* Hilangkan ikon mata bawaan browser */
   }
   .bi-person-fill, .bi-lock-fill {
     position: absolute;
@@ -40,6 +43,13 @@
     left: 12px;
     transform: translateY(-50%);
     color: black;
+  }
+  .bi-eye, .bi-eye-slash {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    cursor: pointer;
   }
   .Eye, .User {
     width: 28px;
@@ -60,7 +70,7 @@
     width: fit-content;
     padding-inline: 2rem;
     font-size: 16px; /* Perbesar ukuran font */
-    background-color: #06DD59;
+    background-color: #40A752;
     border: none;
     border-radius: 20px;
     transition: background-color 0.3s ease;
@@ -103,7 +113,8 @@
     <div class="col-md-6">
       <div class="card card-custom mt-5">
         <div class="card-body text-center">
-          <img src="images/Flogin.jpg" alt="Logo" style="width: 200px; height: auto;"> <!-- Perkecil ukuran gambar -->
+        <img src="images/FormLogin.png" alt="Logo" style="width: 210px; height: 220px; border-radius: 50%;">
+
           <h4 class="mt-3 mb-3">Visitor Management System</h4>
 
           <form method="POST" action="{{ route('login') }}">
@@ -121,16 +132,12 @@
             <div class="form-group">
               <i class="bi bi-lock-fill"></i>
               <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+              <i class="bi bi-eye" id="togglePassword"></i>
             </div>
             @if($errors->has('password'))
               <li class="Aerror">{{ $errors->first('password') }}</li>
-              <!-- <li class="alert alert-danger">{{ $errors->first('password') }}</li> -->
             @endif
             
-            
-            <div class="mt-1 lupa">
-              <a href="#" class="LupaKataSandi">Lupa Password?</a>
-            </div>
             <div style="display: flex; justify-content:center;">
                 <button type="submit" class="btn btn-primary btn-block btn-login">Masuk</button>
             </div>
@@ -146,11 +153,32 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const fadeUpElements = document.querySelectorAll('.fade-up');
-        fadeUpElements.forEach(function (element) {
-            element.classList.add('visible');
-        });
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+
+    // Function to set the initial icon
+    function updatePasswordIcon() {
+        const type = password.getAttribute('type');
+        if (type === 'password') {
+            togglePassword.classList.remove('bi-eye');
+            togglePassword.classList.add('bi-eye-slash');
+        } else {
+            togglePassword.classList.remove('bi-eye-slash');
+            togglePassword.classList.add('bi-eye');
+        }
+    }
+
+    // Set the initial icon on page load
+    updatePasswordIcon();
+
+    togglePassword.addEventListener('click', function (e) {
+        // Toggle the type attribute
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        // Update the icon
+        updatePasswordIcon();
     });
+});
 </script>
 
 </div>
@@ -191,23 +219,23 @@
     });
 </script>
 
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if(Session::has('success'))
     <script>
         Swal.fire({
             icon: "success",
             title: "Logout Berhasil!",
+            confirmButtonColor: "#0265F3" // Warna ungu
         });
     </script>
     @endif
-
 
     @if(session('registrasi_berhasil'))
     <script>
         Swal.fire({
             icon: "success",
             title: "Registrasi Berhasil!",
+            confirmButtonColor: "#0265F3"
         });
     </script>
     @endif
@@ -218,6 +246,7 @@
             icon: "error",
             title: "Oops...",
             text: "Username atau Password tidak valid!, Silahkan login ulang",
+            confirmButtonColor: "#0265F3"
         });
     </script>
     @endif

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/jpeg" href="image/Flogin.jpg">
-  <title>Janji Temu</title>
+  <title>Update Profile</title>
   <!-- Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -20,14 +20,13 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23B0DCE9" fill-opacity="1" d="M0,32L48,58.7C96,85,192,139,288,160C384,181,480,171,576,176C672,181,768,203,864,213.3C960,224,1056,224,1152,218.7C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ff0800" fill-opacity="1" d="M0,32L48,58.7C96,85,192,139,288,160C384,181,480,171,576,176C672,181,768,203,864,213.3C960,224,1056,224,1152,218.7C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
       background-size: cover;
     }
 
     .card-custom {
       background-color: white;
-      border-radius: 30px;
-      box-shadow: -80px 0px 30px rgba(0, 200, 200, 0.8); /* Mengatur lebar bayangan pada sisi kiri */
+      border-radius: 30px;/* Mengatur lebar bayangan pada sisi kiri */
       padding: 20px;
     }
 
@@ -167,7 +166,7 @@
       <div class="col-md-6">
         <div class="card card-custom">
           <div class="card-body">
-            <form class="form-custom" method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+            <form class="form-custom" method="POST" action="/profile/updateuser" enctype="multipart/form-data">
               @csrf
             <div class="row">
               <div class="col">
@@ -196,6 +195,10 @@
                       <label for="email">Email:</label>
                       <input type="email" class="form-control" id="email" name="email" value="{{ $user->email }}">
                     </div>
+                    <div class="form-group">
+                      <label for="email">Status/Pekerjaan:</label>
+                      <input type="text" class="form-control" id="status_pekerjaan" name="status_pekerjaan" value="{{ $user->status_pekerjaan }}">
+                    </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
@@ -204,7 +207,7 @@
                     </div>
                     <div class="form-group">
                       <label for="nomor_telepon">Nomor Telepon:</label>
-                      <input type="text" class="form-control" id="nomor_telepon" name="nomor_telepon" value="0{{ $user->nomor_telepon }}">
+                      <input type="text" class="form-control" id="nomor_telepon" name="nomor_telepon" value="{{ $user->nomor_telepon }}">
                     </div>
                     <div class="form-group">
                       <label for="alamat">Alamat:</label>
@@ -212,7 +215,7 @@
                     </div>
                 </div>
             </div>    
-              <button type="submit" class="btn btn-primary btn-login btn-login-kirim">update</button> 
+              <button type="submit" class="btn btn-primary btn-login btn-login-kirim">Simpan</button> 
               <a href="{{ route('profile') }}" class="btn btn-danger btn-login btn-login-batal">Kembali</a>   
             </form>
           </div>

@@ -75,6 +75,11 @@ class LoginController extends Controller
         return redirect()->route('berandahost.show')->with('success', 'Berhasil login');
     }
 
+    if (Auth::guard('entry_point')->attempt($credentials)) {
+        session()->flash('login_berhasil', true);
+        return redirect()->route('berandaentrypoint.show')->with('success', 'Berhasil login');
+    }
+
     // Jika tidak ada autentikasi yang berhasil
     session()->flash('login_gagal', true);
     return redirect()->route('login.showLoginForm')->with('Failed', 'Username atau password tidak valid');
@@ -103,8 +108,19 @@ class LoginController extends Controller
 //    }
 // }
 
-    public function logout(){
-        Auth::logout();
-        return redirect()->route('login.showLoginForm')->with('success', 'Kamu berhasil logout');
-    }
+public function logout()
+{
+    // Logout from the default guard
+    Auth::logout();
+
+    // Logout from other guards
+    Auth::guard('host')->logout();
+    Auth::guard('admin')->logout();
+    Auth::guard('entry_point')->logout();
+
+    return redirect()->route('login.showLoginForm')->with('success', 'Kamu berhasil logout dari semua guard');
+}
+
+
+    
 }

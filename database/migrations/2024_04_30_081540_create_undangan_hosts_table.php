@@ -16,6 +16,9 @@ return new class extends Migration
         Schema::create('undangan_host', function (Blueprint $table) {
             $table->id();
             $table->string('subject');
+            $table->string('keperluan');
+            $table->string('kunjungan_dari');
+            $table->string('status')->default('Diterima');
             $table->string('keterangan');
             $table->unsignedBigInteger('host_id');
             $table->unsignedBigInteger('lokasi_id');

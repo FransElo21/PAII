@@ -19,10 +19,12 @@ return new class extends Migration
             $table->string('foto_profil')->nullable();
             $table->string('username')->unique();
             $table->string('password');
+            $table->string('status_pekerjaan');
             $table->string('jenis_kelamin');
-            $table->bigInteger('nomor_telepon');
+            $table->string('nomor_telepon');
             $table->string('email')->unique();
             $table->string('alamat');
+            $table->timestamp('last_login')->nullable();
             $table->timestamps();
         });        
     }

@@ -54,6 +54,11 @@ return [
             'driver' => 'session',
             'provider' => 'hosts',
         ],
+
+        'entry_point' => [
+            'driver' => 'session',
+            'provider' => 'entry_points',
+        ],
     ],
 
     /*
@@ -91,6 +96,11 @@ return [
         'hosts' => [
             'driver' => 'eloquent',
             'model' => App\Models\Host::class,
+        ],
+
+        'entry_points' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\entry_point::class,
         ],
 
         // 'users' => [

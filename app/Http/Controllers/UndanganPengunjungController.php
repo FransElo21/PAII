@@ -2,115 +2,164 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GroupMember;
 use App\Models\Host;
+use App\Models\logs_undangan_pengunjung;
+use App\Models\lokasi;
+use App\Models\Pengunjung;
 use App\Models\PengunjungUndangan;
 use App\Models\UndanganPengunjung;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class UndanganPengunjungController extends Controller
 {
-    public function index_janji_temu(){
+    public function index_janji_temu()
+    {
         $hosts = Host::all();
-        return view('janji_temu', compact('hosts'));
+        $pengunjungs = Pengunjung::all();
+        return view('janji_temu', compact('hosts', 'pengunjungs'));
     }
 
-    // public function store(Request $request)
-    // {
-    //     // Validasi data
-    //     $validatedData = $request->validate([
-    //         'subject' => 'required',
-    //         'host_id' => 'required|exists:host,id',
-    //         'waktu_temu' => 'required|date',
-    //         'waktu_kembali' => 'required|date|after:waktu_temu',
-    //         'keterangan' => 'required',
-    //     ]);
+    public function index_undangan()
+    {
+        $hosts = Host::all();
+        $pengunjungs = Pengunjung::all();
+        return view('buat_undangan', compact('hosts', 'pengunjungs'));
+    }
 
-    //     // Mendapatkan ID pengunjung yang sedang membuat undangan
-    //     $pengunjung_id = Auth::id();
-
-    //     // Menambahkan pengunjung_id ke dalam validatedData
-    //     $validatedData['pengunjung_id'] = $pengunjung_id;
-
-    //     // Simpan data janji temu
-    //     UndanganPengunjung::create($validatedData);
-
-    //     // Redirect dengan pesan sukses
-    //     return redirect('janji_temu')->with('success', 'Janji Temu berhasil ditambahkan.');
-    // }
-
-    // public function store(Request $request)
-    // {
-    //     // Simpan data undangan
-    //     $undangan = new Undangan;
-    //     $undangan->subject = $request->subject;
-    //     // tambahkan atribut lainnya
-    //     $undangan->save();
-
-    //     // Simpan data pengunjung
-    //     $pengunjung = new Pengunjung;
-    //     $pengunjung->namaLengkap = $request->namaLengkap;
-    //     // tambahkan atribut lainnya
-    //     $pengunjung->save();
-
-    //     // Attach pengunjung ke undangan
-    //     $undangan->pengunjung()->attach($pengunjung->id);
-
-    //     return redirect()->route('undangan.index')->with('success', 'Undangan berhasil dibuat');
-    // }
-
+    public function create()
+    {
+        return view('undangan.create');
+    }
 
     public function store(Request $request)
-    {
-        // Validasi input
+{
+    // Validasi input
+    $request->validate([
+        'subject' => 'required|string|max:255',
+        'keterangan' => 'required|string|max:255',
+        'kunjungan_dari' => 'required|string|max:255',
+        'waktu_temu' => 'required|date',
+        'waktu_kembali' => 'nullable|date',
+        'host_id' => 'required|exists:host,id',
+        'keperluan' => 'required|string|in:Pribadi,Pekerjaan',
+        'num_visitors' => 'nullable|integer|min:0', // Tidak lagi required
+    ]);
+
+    // Validasi pengunjung tambahan jika ada
+    if ($request->num_visitors > 0) {
         $request->validate([
-            'subject' => 'required|string',
-            'keterangan' => 'required|string',
-            'waktu_temu' => 'required|date',
-            'waktu_kembali' => 'required|date',
-            'host_id' => 'required|exists:host,id',
-            'pengunjung_id' => 'required|exists:pengunjung,id',
+            'visitors' => 'required|array',
+            'visitors.*.name' => 'required|string|max:255',
+            'visitors.*.email' => 'required|email|max:255',
+            'visitors.*.phone' => 'required|string|max:15',
+            'visitors.*.nik' => 'required|string|max:20', // Validasi untuk NIK
         ]);
-
-        // Simpan data undangan_pengunjung
-        $undangan = new UndanganPengunjung();
-        $undangan->subject = $request->subject;
-        $undangan->keterangan = $request->keterangan;
-        $undangan->waktu_temu = $request->waktu_temu;
-        $undangan->waktu_kembali = $request->waktu_kembali;
-        $undangan->host_id = $request->host_id;
-        $undangan->pengunjung_id = $request->pengunjung_id;
-        $undangan->save();
-
-        // Jika jenis undangan adalah berkelompok, simpan data pengunjung tambahan
-        if ($request->invitationType === 'group' && $request->has('additionalGuests')) {
-            foreach ($request->additionalGuests as $guestName) {
-                // Buat pengunjung baru
-                $pengunjung = new PengunjungUndangan();
-                $pengunjung->pengunjung_id = $undangan->pengunjung_id;
-                // Disesuaikan sesuai kebutuhan Anda
-                // Misalnya, jika hanya menyimpan nama pengunjung, gunakan kolom 'nama'
-                $pengunjung->nama = $guestName;
-                $pengunjung->save();
-            }
-        }
-
-        // Redirect atau response sesuai kebutuhan Anda
-        return redirect()->route('nama_route')->with('success', 'Undangan berhasil dibuat!');
     }
 
-    public function index_beranda(){
-        $undangans = UndanganPengunjung::all();
-        $data = [
-            "title" => "Dashboard"
-        ];
-        return view('beranda', compact('undangans'))->with($data);
-    }   
+    // Ambil lokasi_id dari tabel hosts berdasarkan host_id
+    $host = Host::find($request->host_id);
+    if (!$host || !$host->lokasi_id) {
+        return redirect()->back()->withErrors(['host_id' => 'Host tidak memiliki lokasi yang terkait.']);
+    }
+
+    // Tetapkan nilai pengunjung_id ke dalam array $request dan tambahkan status serta lokasi_id
+    $request->merge(['pengunjung_id' => Auth::id(), 'status' => 'Menunggu', 'lokasi_id' => $host->lokasi_id]);
+
+    // Buat undangan
+    $undangan = UndanganPengunjung::create($request->only([
+        'subject', 'keterangan', 'status', 'kunjungan_dari', 'waktu_temu',
+        'waktu_kembali', 'host_id', 'pengunjung_id', 'lokasi_id', 'keperluan'
+    ]));
+
+    // Tambahkan pengunjung tambahan jika ada
+    if ($request->num_visitors > 0) {
+        foreach ($request->visitors as $visitor) {
+            GroupMember::create([
+                'undangan_id' => $undangan->id,
+                'name' => $visitor['name'],
+                'email' => $visitor['email'],
+                'phone' => $visitor['phone'],
+                'nik' => $visitor['nik'], // Simpan juga NIK
+            ]);
+        }
+    }
+
+    // Simpan log undangan pengunjung
+    logs_undangan_pengunjung::create([
+        'undangan_id' => $undangan->id,
+        'pengunjung_id' => Auth::id(),
+        'check_in' => null,
+        'check_out' => null,
+    ]);
+
+    // Redirect dengan pesan sukses
+    session()->flash('buat_undangan_berhasil', true);
+    return redirect()->route('undangan.show')->with('buat_undangan_berhasil', 'Undangan berhasil dibuat.');
+}
 
     public function detail_undangan($id)
     {
-        // $undangan = Undangan::findOrFail($id);
         $undangan_pengunjung = UndanganPengunjung::findOrFail($id);
         return view('detail_undangan', compact('undangan_pengunjung'));
     }
+
+    public function checkAndUpdateStatus()
+    {
+        $now = Carbon::now('Asia/Jakarta');
+
+        // Update status undangan yang sudah kadaluarsa
+        UndanganPengunjung::where('status', 'Menunggu')
+            ->where('waktu_kembali', '<', $now)
+            ->update(['status' => 'Kadaluarsa']);
+
+        $undangan_masuk = UndanganPengunjung::where('status', 'Menunggu')->count();
+        $undangan_akan_datang = UndanganPengunjung::where('status', 'Diterima')->count();
+        $undangan_kadaluarsa = UndanganPengunjung::where('status', 'Kadaluarsa')->count();
+
+        return response()->json([
+            'undangan_masuk' => $undangan_masuk,
+            'undangan_akan_datang' => $undangan_akan_datang,
+            'undangan_kadaluarsa' => $undangan_kadaluarsa
+        ]);
+    }
+
+public function filterRiwayat(Request $request)
+    {
+        $tanggalFilter = $request->input('tanggalFilter');
+
+        // Query untuk mengambil data dari database berdasarkan tanggal
+        $riwayats = UndanganPengunjung::where('waktu_temu', $tanggalFilter)->get();
+
+        return response()->json($riwayats);
+    }
+
+    public function updateUndanganStatus(Request $request)
+    {
+        try {
+            // Ambil semua undangan yang statusnya diterima
+            $undangans = UndanganPengunjung::where('status', 'Diterima')->get();
+
+            foreach ($undangans as $undangan) {
+                // Cek apakah undangan ini memiliki log dengan check_out yang sudah terisi
+                $log = logs_undangan_pengunjung::where('undangan_id', $undangan->id)
+                    ->whereNotNull('check_out')
+                    ->first();
+
+                if ($log) {
+                    // Update status undangan menjadi 'Selesai'
+                    $undangan->status = 'Selesai';
+                    $undangan->save();
+                }
+            }
+
+            return response()->json(['message' => 'Status undangan berhasil diperbarui.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
+
 }

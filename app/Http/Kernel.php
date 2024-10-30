@@ -21,6 +21,8 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        // \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+        \App\Http\Middleware\Cors::class,
     ];
 
     /**
@@ -64,6 +66,9 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'isLogin'=> \App\Http\Middleware\isLogin::class,
-        'checkRole' => \App\Http\Middleware\CheckRole::class
+        'checkRole' => \App\Http\Middleware\CheckRole::class,
+        'host' => \App\Http\Middleware\HostMiddleware::class,
+        'admin' => \App\Http\Middleware\isAdmin::class,
+        'entry_point.auth' => \App\Http\Middleware\EntryPointMiddleware::class,
     ];
 }

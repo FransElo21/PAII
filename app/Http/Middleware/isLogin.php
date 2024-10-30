@@ -16,8 +16,7 @@ class isLogin
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next)
-    {
-        
+    { 
         if(Auth::check()){
             return $next($request);
         }

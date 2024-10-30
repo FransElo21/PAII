@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/jpeg" href="image/Flogin.jpg">
+  <link rel="shortcut icon" type="image/png" href="images/Flogin.jpg">
   <title>Registrasi</title>
   <!-- Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
   <style>
     body {
       background-color: #f9f9f9;
@@ -18,59 +19,41 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23B0DCE9" fill-opacity="1" d="M0,32L48,58.7C96,85,192,139,288,160C384,181,480,171,576,176C672,181,768,203,864,213.3C960,224,1056,224,1152,218.7C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ff0800" fill-opacity="1" d="M0,32L48,58.7C96,85,192,139,288,160C384,181,480,171,576,176C672,181,768,203,864,213.3C960,224,1056,224,1152,218.7C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
       background-size: cover;
     }
 
     .card-custom {
       background-color: white;
       border-radius: 30px;
-      box-shadow: -80px 0px 30px rgba(0, 200, 200, 0.8); /* Mengatur lebar bayangan pada sisi kiri */
       padding: 20px;
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     input[type="text"],
     input[type="password"],
+    input[type="tel"],
+    input[type="email"],
     select,
     textarea {
       border: 1px solid #ced4da;
       border-radius: 25px;
-      padding: 15px;
+      padding: 10px;
+      width: 100%;
     }
 
-    .radio-group{
+    .radio-group {
       margin-left: 25px;
-    }
-    
-    select.form-control {
-       border-radius: 25px;
-    }
-    input[type="email"].form-control,
-    input[type="password"].form-control {
-      border-radius: 25px;
-    }
-    textarea.form-control {
-       border-radius: 25px;
-    }
-
-    .bi-person-fill,
-    .bi-lock-fill {
-      position: absolute;
-      top: 50%;
-      left: 20px;
-      transform: translateY(-50%);
-      color: #6c757d;
     }
 
     .btn-login {
       width: fit-content;
       justify-content: center;
-      padding-inline: 2rem;
-      font-size: 20px;
+      padding-inline: 1.5rem;
+      font-size: 18px;
       background-color: #06DD59;
       border: none;
       border-radius: 30px;
@@ -104,14 +87,13 @@
     .fade-up.visible {
       opacity: 1;
       transform: translateY(0);
-      box-shadow: none; /* Menghapus bayangan saat card muncul */
+      box-shadow: none;
     }
 
     .text-center {
       text-align: center;
     }
 
-    /* CSS untuk radio button horizontal */
     .radio-group {
       display: flex;
       justify-content: space-between;
@@ -121,6 +103,17 @@
       flex: 1;
       margin-right: 10px;
     }
+    input[type="tel"] {
+  /* Sesuaikan padding sesuai kebutuhan */
+  padding: 10px;
+  /* Sesuaikan border radius */
+  border-radius: 25px;
+  /* Sesuaikan border color */
+  border: 1px solid #ced4da;
+  /* Sesuaikan lebar field sesuai kebutuhan */
+  width: 100%;
+}
+
   </style>
 </head>
 <body>
@@ -152,44 +145,76 @@
                 <input type="text" class="form-control" id="username" name="username" value="{{ old('username') }}" placeholder="Username" required>
               </div>
 
-              <div class="form-group">
+              <div class="form-group position-relative">
+                <input type="text" class="form-control" id="status_pekerjaan" name="status_pekerjaan" placeholder="Status/Pekerjaan" required>
+              </div>
+
+              <div class="form-group position-relative">
                 <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
               </div>
 
-              <div class="form-group">
+              <div class="form-group position-relative">
                 <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Konfirmasi Password" required>
-            </div>
+              </div>
 
-            <div class="form-group">
-              <div class="radio-group">
-                <div class="radio-item">
-                  <input class="form-check-input" type="radio" name="jenis_kelamin" id="laki-laki" value="Laki-laki" required>
-                  <label class="form-check-label" for="laki-laki">
-                    <i class="bi bi-gender-male"></i> Laki-laki
-                  </label>
+              <div class="form-group">
+                <div class="radio-group">
+                  <div class="radio-item">
+                    <input class="form-check-input" type="radio" name="jenis_kelamin" id="laki-laki" value="Laki-laki" required>
+                    <label class="form-check-label" for="laki-laki">
+                      <i class="bi bi-gender-male"></i> Laki-laki
+                    </label>
+                  </div>
+                  <div class="radio-item">
+                    <input class="form-check-input" type="radio" name="jenis_kelamin" id="perempuan" value="Perempuan" required>
+                    <label class="form-check-label" for="perempuan">
+                      <i class="bi bi-gender-female"></i> Perempuan
+                    </label>
+                  </div>
                 </div>
-                <div class="radio-item">
-                  <input class="form-check-input" type="radio" name="jenis_kelamin" id="perempuan" value="Perempuan" required>
-                  <label class="form-check-label" for="perempuan">
-                    <i class="bi bi-gender-female"></i> Perempuan
-                  </label>
-                </div>
-              </div>
-            </div> 
+              </div> 
 
               <div class="form-group">
-                <input type="text" class="form-control" id="nomor_telepon" name="nomor_telepon" placeholder="Nomor Telepon" required>
+                <input type="tel" class="form-control" id="phone" name="nomor_telepon" value="{{ old('nomor_telepon') }}" placeholder="Nomor Telepon" required>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+                <script>
+                  document.addEventListener("DOMContentLoaded", function() {
+                    const phoneInputField = document.querySelector("#phone");
+                    const phoneInput = window.intlTelInput(phoneInputField, {
+                      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+                    });
+
+                    phoneInputField.addEventListener("countrychange", function() {
+                      phoneInputField.value = '';
+                      const selectedCountryData = phoneInput.getSelectedCountryData();
+                      const countryCode = selectedCountryData.dialCode;
+                      let phoneNumber = phoneInput.getNumber();
+                      phoneNumber = phoneNumber.replace(/\D/g, '');
+                      if (!phoneNumber.startsWith(countryCode)) {
+                        phoneNumber = "+" + countryCode + phoneNumber;
+                        phoneInput.setNumber(phoneNumber);
+                      }
+                    });
+
+                    function process(event) {
+                      event.preventDefault();
+                      const phoneNumber = phoneInput.getNumber();
+                      console.log("Phone Number:", phoneNumber);
+                    }
+                  });
+                </script>
               </div>
 
-              <div class="form-group">
-                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+              <div class="form-group position-relative">
+                <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" placeholder="Email" required>
               </div>
 
-              <div class="form-group">
-                <textarea class="form-control" id="alamat" name="alamat" placeholder="Alamat" required></textarea>
+              <div class="form-group position-relative">
+                <textarea class="form-control" id="alamat" name="alamat" placeholder="Alamat" required>{{ old('alamat') }}</textarea>
               </div>
 
-              <div class="form-group">
+              <div class="form-group position-relative">
                 <div class="custom-file">
                   <input type="file" class="custom-file-input" id="foto_profil" name="foto_profil" accept="image/*">
                   <label class="custom-file-label" for="foto_profil">Pilih Foto Profile</label>
@@ -239,10 +264,8 @@
       });
     }
 
-    // Get all elements with the class 'fade-up'
     const fadeUpElements = document.querySelectorAll('.fade-up');
 
-    // Function to check if an element is in the viewport
     function isInViewport(element) {
       const rect = element.getBoundingClientRect();
       return (
@@ -253,10 +276,8 @@
       );
     }
 
-    // Initial check on page load
     handleScroll();
 
-    // Event listener for scroll
     window.addEventListener('scroll', handleScroll);
   });
 </script>
@@ -271,7 +292,6 @@
   </script>
 @endif
 <script>
-  // Mengubah teks label sesuai nama file yang dipilih
   document.getElementById('foto_profil').addEventListener('change', function() {
     var fileName = this.files[0].name;
     var nextSibling = this.nextElementSibling;

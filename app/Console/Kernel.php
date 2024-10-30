@@ -15,8 +15,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            \App\Services\UndanganService::updateExpiredStatus();
+        })->everyThirtyMinutes();
     }
+
 
     /**
      * Register the commands for the application.

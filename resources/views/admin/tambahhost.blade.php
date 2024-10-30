@@ -10,10 +10,20 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
     body {
-      background-color: #f9f9f9;
-      background: linear-gradient(120deg, #B0DCE9, #FFFFFF); /* Mengatur gradasi warna latar belakang */
+      margin: 0; /* Reset default margin */
+      padding: 0; /* Reset default padding */
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 100%;
-      overflow: hidden;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23c9121c" fill-opacity="1" d="M0,32L48,58.7C96,85,192,139,288,160C384,181,480,171,576,176C672,181,768,203,864,213.3C960,224,1056,224,1152,218.7C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+
+      background-size: cover;
+      z-index: -1; /* Place background behind other content */
     }
 
     .Login {
@@ -21,18 +31,18 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      overflow: auto; /* Mengatur overflow agar konten dapat di-scroll jika melebihi ketinggian layar */
+      overflow: auto; /* Allow content to be scrolled if exceeds viewport height */
     }
 
     .card-custom {
       background-color: white;
       border-radius: 30px;
-      box-shadow: -80px 0px 30px rgba(0, 200, 200, 0.8); /* Mengatur lebar bayangan pada sisi kiri */
+
       padding: 20px;
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     input[type="text"],
@@ -40,8 +50,9 @@
     select,
     textarea {
       border: 1px solid #ced4da;
-      border-radius: 25px;
-      padding: 15px;
+      border-radius: 15px; /* Mengurangi radius border */
+      padding: 10px; /* Mengurangi padding */
+      font-size: 14px; /* Mengurangi ukuran teks */
     }
 
     .radio-group{
@@ -49,14 +60,14 @@
     }
     
     select.form-control {
-       border-radius: 25px;
+       border-radius: 15px; /* Mengurangi radius border */
     }
     input[type="email"].form-control,
     input[type="password"].form-control {
-      border-radius: 25px;
+      border-radius: 15px; /* Mengurangi radius border */
     }
     textarea.form-control {
-       border-radius: 25px;
+       border-radius: 15px; /* Mengurangi radius border */
     }
 
     .bi-person-fill,
@@ -72,15 +83,30 @@
       width: fit-content;
       justify-content: center;
       padding-inline: 2rem;
-      font-size: 20px;
-      background-color: #06DD59;
+      font-size: 16px; /* Mengurangi ukuran teks */
+      background-color: #40A752; /* Ubah warna ke hijau */
       border: none;
       border-radius: 30px;
       transition: background-color 0.3s ease;
     }
 
     .btn-login:hover {
-      background-color: #05b94d;
+      background-color: #05b94d; /* Ubah warna saat hover */
+    }
+
+    .btn-kembali { /* Tombol kembali */
+      width: fit-content;
+      justify-content: center;
+      padding-inline: 2rem;
+      font-size: 16px; /* Mengurangi ukuran teks */
+      background-color: #FF0000; /* Warna merah */
+      border: none;
+      border-radius: 30px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-kembali:hover {
+      background-color: #FF3333; /* Ubah warna saat hover */
     }
 
     .mt-3 {
@@ -100,13 +126,12 @@
     .fade-up {
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity 0.5s, transform 0.5s, box-shadow 0.5s;
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
     }
 
     .fade-up.visible {
       opacity: 1;
       transform: translateY(0);
-      box-shadow: none; /* Menghapus bayangan saat card muncul */
     }
 
     .text-center {
@@ -127,6 +152,7 @@
 </head>
 <body>
 
+<div class="background">
 <div class="Login">
   <div class="container">
     <div class="row justify-content-center fade-up">
@@ -180,7 +206,35 @@
               </div> 
                            
               <div class="form-group">
-                <input type="text" class="form-control" id="nomor_telepon" name="nomor_telepon" placeholder="Nomor Telepon" required>
+                <input type="tel" class="form-control" id="phone" name="nomor_telepon" value="{{ old('nomor_telepon') }}" placeholder="Nomor Telepon" required>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+                <script>
+                  document.addEventListener("DOMContentLoaded", function() {
+                    const phoneInputField = document.querySelector("#phone");
+                    const phoneInput = window.intlTelInput(phoneInputField, {
+                      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+                    });
+
+                    phoneInputField.addEventListener("countrychange", function() {
+                      phoneInputField.value = '';
+                      const selectedCountryData = phoneInput.getSelectedCountryData();
+                      const countryCode = selectedCountryData.dialCode;
+                      let phoneNumber = phoneInput.getNumber();
+                      phoneNumber = phoneNumber.replace(/\D/g, '');
+                      if (!phoneNumber.startsWith(countryCode)) {
+                        phoneNumber = "+" + countryCode + phoneNumber;
+                        phoneInput.setNumber(phoneNumber);
+                      }
+                    });
+
+                    function process(event) {
+                      event.preventDefault();
+                      const phoneNumber = phoneInput.getNumber();
+                      console.log("Phone Number:", phoneNumber);
+                    }
+                  });
+                </script>
               </div>
                             <div class="form-group">
                 <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
@@ -191,28 +245,29 @@
               </div>
               
               <select class="form-control form-group" id="divisi" name="divisi_id">
-                <option value="" disabled selected>Pilih Divisi</option> <!-- Placeholder -->
+                <option value="" disabled selected>Divisi</option> <!-- Placeholder -->
                 @foreach ($divisis as $divisi)
                   <option value="{{ $divisi->id }}">{{ $divisi->nama_divisi }}</option>
                 @endforeach
               </select>     
               
               <select class="form-control form-group" id="lokasi" name="lokasi_id">
-                <option value="" disabled selected>Pilih Lokasi</option> <!-- Placeholder -->
+                <option value="" disabled selected>Lokasi</option> <!-- Placeholder -->
                 @foreach ($lokasis as $lokasi)
-                  <option value="{{ $lokasi->id }}">{{ $lokasi->ruangan }}</option>
+                  <option value="{{ $lokasi->id }}">{{ $lokasi->ruangan }} {{ $lokasi->lantai }}</option>
                 @endforeach
               </select>  
           
               <div class="form-group">
                 <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="foto_profil" name="foto_profil" accept="image/*">
-                  <label class="custom-file-label" for="foto_profil">Pilih Foto Profile</label>
+                    <input type="file" class="custom-file-input" id="foto_profil" name="foto_profil" accept="image/*" data-browse="Gambar Kamera">
+                    <label class="custom-file-label" for="foto_profil">Foto Profile</label>
                 </div>
-              </div>              
+              </div>       
 
-              <div style="display: flex; justify-content:center;">
-                <button type="submit" class="btn btn-primary">Tambah</button>
+              <div style="display: flex; justify-content: space-between;">
+                <button type="button" class="btn btn-kembali" onclick="window.location.href='/hostadmin'" style="color: white" >Kembali</button>
+                <button type="submit" class="btn btn-login" style="color:white;" >Tambah</button> <!-- Tombol Kirim -->
               </div>
             </form>
           </div>
@@ -221,6 +276,8 @@
     </div>
   </div>
 </div>
+</div>
+
 
 @if(Session::has('success'))
   <script>
@@ -273,6 +330,11 @@
   });
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+
 <script>
   // Mengubah teks label sesuai nama file yang dipilih
   document.getElementById('foto_profil').addEventListener('change', function() {
@@ -281,8 +343,6 @@
     nextSibling.innerText = fileName;
   });
 </script>
-
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @if(Session::has('success'))
   <script>
@@ -292,6 +352,7 @@
     });
   </script>
 @endif
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 </body>
 </html>

@@ -17,6 +17,7 @@ class Pengunjung extends Authenticatable
         'namaLengkap',
         'username',
         'password',
+        'status_pekerjaan',
         'jenis_kelamin',
         'nomor_telepon',
         'email',
@@ -36,8 +37,24 @@ class Pengunjung extends Authenticatable
         return 'pengunjung'; // Tentukan peran pengguna pengunjung
     }
 
-    public function undangan()
+    public function undangans()
     {
-        return $this->belongsToMany(UndanganPengunjung::class, 'pengunjung_undangan');
+        return $this->belongsToMany(UndanganPengunjung::class, 'pengunjung_undangan', 'pengunjung_id', 'undangan_id');
     }
+
+    public function undanganPengunjung()
+    {
+        return $this->hasMany(UndanganPengunjung::class);
+    }
+
+    public function UpModels(){
+        return $this->hasMany(UpModel::class);
+    }
+
+    public function logs()
+    {
+        return $this->hasMany(logs_undangan_pengunjung::class, 'pengunjung_id');
+    }
+
+
 }
